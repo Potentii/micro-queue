@@ -1,19 +1,16 @@
-import {drizzle} from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import {drizzle} from 'drizzle-orm/libsql';
+import {createClient} from '@libsql/client';
+import process from "node:process";
 import path from "node:path";
 
-const dbsByRoot = new Map();
+let _db = null;
 
-// /**
-//  *
-//  * @param rootPath
-//  * @returns {BetterSQLite3Database<Record<string, never>>}
-//  */
-export function db(rootPath){
-	if(!dbsByRoot.has(rootPath)){
-		const sqlite = new Database(path.join(rootPath, process.env.QUEUE_FOLDER_NAME, '/micro-queue.db'), {  });
-		dbsByRoot.set(rootPath, drizzle(sqlite));
+export function db(){
+	if(!_db){
+		const client = createClient({ url: 'file:' + path.join(process.env.ROOT_PATH, '/micro-queue.db') });
+		_db = drizzle(client);
 	}
-	return dbsByRoot.get(rootPath);
+
+	return _db;
 }
 

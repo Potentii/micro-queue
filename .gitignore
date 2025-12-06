@@ -149,14 +149,14 @@ volume
 .env.prod
 .env
 
+temp
 
 dataSources.xml
 
 certs
 
-repository/migrations
-
 start.xml
 
 
 /.idea/sqldialects.xml
+/.idea/data_source_mapping.xml

@@ -1,6 +1,8 @@
 import Logger from "@potentii/logger-js-pino";
 import Joi from "joi";
 import Rest from "./rest.mjs";
+import Batches from "./batches.mjs";
+import process from "node:process";
 
 
 // *Global error handling:
@@ -28,13 +30,22 @@ Logger.info(`APP:SETUP_STARTED`, `Application setup starting`);
 
 // *Validating the environment:
 Joi.assert(process.env.PORT, Joi.number().required().min(0).label('$env.PORT'));
-Joi.assert(process.env.TOKEN_PUBLIC_KEY, Joi.string().required().label('$env.TOKEN_PUBLIC_KEY'));
+Joi.assert(process.env.IS_HTTPS, Joi.bool().optional().allow(null).label('$env.IS_HTTPS'));
 
-if(!process.env.TOKEN_PUBLIC_KEY.startsWith('-----BEGIN PUBLIC KEY-----'))
-	process.env.TOKEN_PUBLIC_KEY = Buffer.from(process.env.TOKEN_PUBLIC_KEY, 'base64url').toString('utf8');
+Joi.assert(process.env.REDRIVE_BATCH_INTERVAL_MS, Joi.number().optional().allow(null).min(300).label('$env.REDRIVE_BATCH_INTERVAL_MS'));
+Joi.assert(process.env.REDRIVE_BATCH_PAGE_SIZE, Joi.number().optional().allow(null).min(1).label('$env.REDRIVE_BATCH_PAGE_SIZE'));
+Joi.assert(process.env.REDRIVE_BATCH_DISABLED, Joi.bool().optional().allow(null).label('$env.REDRIVE_BATCH_DISABLED'));
+
+Joi.assert(process.env.TTL_BATCH_INTERVAL_MS, Joi.number().optional().allow(null).min(300).label('$env.TTL_BATCH_INTERVAL_MS'));
+Joi.assert(process.env.TTL_BATCH_PAGE_SIZE, Joi.number().optional().allow(null).min(1).label('$env.TTL_BATCH_PAGE_SIZE'));
+Joi.assert(process.env.TTL_BATCH_DISABLED, Joi.bool().optional().allow(null).label('$env.TTL_BATCH_DISABLED'));
+
+Joi.assert(process.env.ROOT_PATH, Joi.string().required().uri().label('$env.ROOT_PATH'));
+
 
 // *Setting up the app's components:
 await Rest.setup();
+await Batches.start();
 
 
 Logger.info(`APP:SETUP_COMPLETE`, `Application setup completed`);
