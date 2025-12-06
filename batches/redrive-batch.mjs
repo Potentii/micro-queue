@@ -24,7 +24,7 @@ export default class RedriveBatch {
 
 
 		if(REDRIVE_BATCH_DISABLED){
-			Logger.info(`REDRIVE:BATCH:STARTED`, `Messages redrive batch disabled`);
+			Logger.info(`REDRIVE:BATCH:DISABLED`, `Messages redrive batch disabled`);
 			return;
 		}
 

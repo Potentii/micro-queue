@@ -21,7 +21,7 @@ export default class TtlBatch {
 
 
 		if(TTL_BATCH_DISABLED){
-			Logger.info(`TTL:BATCH:STARTED`, `Messages TTL batch disabled`);
+			Logger.info(`TTL:BATCH:DISABLED`, `Messages TTL batch disabled`);
 			return;
 		}
 
